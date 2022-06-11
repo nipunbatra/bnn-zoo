@@ -1,0 +1,20 @@
+import jax
+import optax
+import jax.numpy as jnp
+
+def fit(model, params, X, y, learning_rate = 0.01, epochs=100, key=0, verbose=False):
+    opt = optax.adam(learning_rate=learning_rate)
+    opt_state = opt.init(params)
+
+    loss_grad_fn = jax.jit(jax.value_and_grad(model.loss_fn))
+    key = jax.random.PRNGKey(key)
+    losses = []
+    for i in range(epochs):
+        key, _ = jax.random.split(key)
+        loss_val, grads = loss_grad_fn(params, X, y, False, key)
+        updates, opt_state = opt.update(grads, opt_state)
+        params = optax.apply_updates(params, updates)
+        losses.append(loss_val)
+        if verbose and i % (epochs / 10) == 0:
+            print('Loss step {}: '.format(i), loss_val)
+    return params, jnp.array(losses)
