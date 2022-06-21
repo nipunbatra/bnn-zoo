@@ -54,23 +54,25 @@ def calibration_regression(mean,sigma,Y,ax=None):
 
 
 
-def plot_prediction(X,Y,x_test_1,y_test_1,x_test_2,y_test_2,mean,sigma,mean_lx,sigma_lx,mean_ux,sigma_ux):
+def plot_prediction(X,Y,mean,sigma):
     plt.figure(figsize=(10,5))
-    plt.plot(X,mean, "r--", linewidth=2)
-    plt.plot(x_test_1,mean_lx, "r--", linewidth=2)
-    plt.plot(x_test_2,mean_ux, "r--", linewidth=2)
+    plt.plot(X,mean, "r--", linewidth=3)
+    # plt.plot(x_test_1,mean_lx, "r--", linewidth=2)
+    # plt.plot(x_test_2,mean_ux, "r--", linewidth=2)
     for i_std in range(1,4):
-      plt.fill_between(X.reshape(100), jnp.array((mean-i_std*sigma)), jnp.array((mean+i_std*sigma)), color='red',alpha=1/(3*i_std), label='std'+str(i_std))
-    for i_std in range(1,4):
-      plt.fill_between(x_test_1.reshape(100), jnp.array((mean_lx-i_std*sigma_lx)), jnp.array((mean_lx+i_std*sigma_lx)), color='red',alpha=1/(3*i_std), label='std'+str(i_std))
-    for i_std in range(1,4):
-      plt.fill_between(x_test_2.reshape(100), jnp.array((mean_ux-i_std*sigma_ux)), jnp.array((mean_ux+i_std*sigma_ux)), color='red',alpha=1/(3*i_std), label='std'+str(i_std))
-    plt.scatter(X, Y,color='black',alpha=0.5)
-    plot_actualdata(X,Y,x_test_1,y_test_1,x_test_2,y_test_2)
+      plt.fill_between(X.reshape(300), jnp.array((mean-i_std*sigma)), jnp.array((mean+i_std*sigma)), color='red',alpha=1/(3*i_std), label='std'+str(i_std))
+    # for i_std in range(1,4):
+    #   plt.fill_between(x_test_1.reshape(100), jnp.array((mean_lx-i_std*sigma_lx)), jnp.array((mean_lx+i_std*sigma_lx)), color='yellow',alpha=1/(3*i_std), label='std'+str(i_std))
+    # for i_std in range(1,4):
+    #   plt.fill_between(x_test_2.reshape(100), jnp.array((mean_ux-i_std*sigma_ux)), jnp.array((mean_ux+i_std*sigma_ux)), color='yellow',alpha=1/(3*i_std), label='std'+str(i_std))
+    plt.scatter(X, Y,color='black',alpha=0.2)
+    plt.vlines(0,min(mean-3*sigma),max(mean+3*sigma),colors='black',linestyles='--')
+    plt.vlines(0.5,min(mean-3*sigma),max(mean+3*sigma),colors='black',linestyles='--')
+    # plot_actualdata(X,Y,x_test_1,y_test_1,x_test_2,y_test_2)
 
     # plt.plot(X, final_mean+final_sigma)
     plt.xlabel("$x$")
     plt.ylabel("$y$")
-    plt.ylim(-2,2)
+    # plt.ylim(-2,2)
     sns.despine()
     plt.show()
