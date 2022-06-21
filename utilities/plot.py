@@ -26,13 +26,16 @@ def calibration_regression(mean,sigma,Y,ax=None):
     df['perc'] = st.norm.cdf(df['z'])
     k=jnp.arange(0,1.1,.1)
     counts=[]
-    
+    df2 = pd.DataFrame()
+    df2['Interval'] = k
+    df2['Ideal'] = k
     for i in range(0,11):
     
       l = df[df['perc']<0.5+i*0.05]
       l = l[l['perc']>=0.5-i*0.05]
       counts.append(len(l)/len(df))
     #   print(0.5+i*0.05,0.5-i*0.05,len(l)/len(df))
+    df2['Counts']=counts
 
     ax.plot(k,counts,color='red',label='Prediction')
     ax.plot(k,k,color='black',label='Ideal')
@@ -46,7 +49,7 @@ def calibration_regression(mean,sigma,Y,ax=None):
     # ax.xlabel('Decile')
     # ax.ylabel('Ratio of points')
     sns.despine()
-    return df
+    return df,df2
 
 
 
