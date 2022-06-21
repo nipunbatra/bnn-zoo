@@ -24,7 +24,6 @@ def calibration_regression(mean,sigma,Y,ax=None):
     df['Y']=Y
     df['z']=(df['Y']-df['mean'])/df['sigma']
     df['perc'] = st.norm.cdf(df['z'])
-    df['r'] = (df['perc']*10).astype('int')
     k=jnp.arange(0,1.1,.1)
     counts=[]
     
@@ -35,17 +34,17 @@ def calibration_regression(mean,sigma,Y,ax=None):
       counts.append(len(l)/len(df))
     #   print(0.5+i*0.05,0.5-i*0.05,len(l)/len(df))
 
-    plt.plot(k,counts,color='red',label='Prediction')
-    plt.plot(k,k,color='black',label='Ideal')
-    plt.plot(k,counts,'o',color='red')
-    plt.plot(k,k,'o',color='black')
-    plt.xticks(k)
-    plt.yticks(k)
-    plt.xlim([0,1])
-    plt.ylim([0,1])
-    plt.legend()
-    plt.xlabel('Decile')
-    plt.ylabel('Ratio of points')
+    ax.plot(k,counts,color='red',label='Prediction')
+    ax.plot(k,k,color='black',label='Ideal')
+    ax.plot(k,counts,'o',color='red')
+    ax.plot(k,k,'o',color='black')
+    # ax.xticks(k)
+    # ax.yticks(k)
+    # ax.xlim([0,1])
+    # ax.ylim([0,1])
+    # ax.legend()
+    # ax.xlabel('Decile')
+    # ax.ylabel('Ratio of points')
     sns.despine()
     return df
 
