@@ -29,5 +29,8 @@ class mlp(nn.Module):
         y_pred = self.apply(params, X, deterministic = deterministic, rngs={"dropout": rng})
         loss = jnp.sum((y - y_pred)**2)/(2*X.shape[0])
         return loss
+        
+
+
 
 
