@@ -13,12 +13,13 @@ def plot_actualdata(X,Y,x_test_1,y_test_1,x_test_2,y_test_2):
     plt.legend()
     sns.despine()
 def calibration_reg(mean,sigma,Y,ax=None):
-    mean_train = mean[100:200]
-    sigma_train = sigma[100:200]
-    y_train = Y[100:200]
-    mean_test = jnp.concatenate([mean[:100],mean[200:]])
-    sigma_test  =jnp.concatenate([sigma[:100],sigma[200:]])
-    y_test=jnp.concatenate([Y[:100],Y[200:]])
+    n =len(Y)
+    mean_train = mean[int(n*1/3):int(n*2/3)]
+    sigma_train = sigma[int(n*1/3):int(n*2/3)]
+    y_train = Y[int(n*1/3):int(n*2/3)]
+    mean_test = jnp.concatenate([mean[:int(n*1/3)],mean[int(n*2/3):]])
+    sigma_test  =jnp.concatenate([sigma[:int(n*1/3)],sigma[int(n*2/3):]])
+    y_test=jnp.concatenate([Y[:int(n*1/3)],Y[int(n*2/3):]])
     _,_ = calibration_regression(mean_train,sigma_train,y_train,'black','Train',ax)
     _,_ = calibration_regression(mean_test,sigma_test,y_test,'crimson','Test',ax)
 def calibration_regression(mean,sigma,Y,color,label,ax=None):
@@ -55,7 +56,6 @@ def calibration_regression(mean,sigma,Y,color,label,ax=None):
 def plot_prediction(X,Y,x_stack,y_stack,mean,sigma,title,ax=None,n_points=300):
     if ax==None:
       fig,ax=plt.subplots(1)
-    # x_stack
     ax.plot(x_stack,mean, color='red',linewidth=3)
     for i_std in range(1,4):
       ax.fill_between(x_stack.reshape(n_points), jnp.array((mean-i_std*sigma)), jnp.array((mean+i_std*sigma)), color='lightsalmon',alpha=2/(3*i_std), label=f'$\mu\pm{i_std}\sigma$')
