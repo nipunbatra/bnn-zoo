@@ -11,9 +11,9 @@ class gmlp(nn.Module):
     @nn.compact
     def __call__(self, X, deterministic):
         if(len(self.activations)!=len(self.features)):
-            raise Exception(f'Length of activations should be equal to {len(self.feaatures)}')
+            raise Exception(f'Length of activations should be equal to {len(self.features)}')
         if(len(self.dropout_rate)!=len(self.features)):
-            raise Exception(f'Length of dropout rates should be equal to {len(self.feaatures)}')
+            raise Exception(f'Length of dropout rates should be equal to {len(self.features)}')
         for i, feature in enumerate(self.features):
             X = nn.Dense(feature, kernel_init=jax.nn.initializers.glorot_normal(), name=f"{i}_Dense")(X)
             X =self.activations[i](X)
