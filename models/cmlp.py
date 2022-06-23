@@ -23,11 +23,10 @@ class cmlp(nn.Module):
                 X = self.activations[i](X)
                 X = nn.Dropout(rate=self.dropout_rate[i], deterministic=deterministic, 
                                 name=f"{i}_Dropout_{self.dropout_rate[i]}")(X)
-        return X
+        return nn.sigmoid(X)
 
     def loss_fn(self, params, X, y, deterministic=False, rng=jax.random.PRNGKey(0)):
-        logits = self.apply(params, X, deterministic=False, rngs={"dropout": rng})
-        y_pred = nn.sigmoid(logits)
+        y_pred = self.apply(params, X, deterministic=False, rngs={"dropout": rng})
         cost0 = jnp.dot(y.T, jnp.log(y_pred + 1e-7))
         cost1 = jnp.dot((1 - y).T, jnp.log(1 - y_pred + 1e-7))
         loss = (cost0 + cost1)/len(X)
