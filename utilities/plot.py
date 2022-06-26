@@ -73,3 +73,30 @@ def plot_prediction(X,Y,x_stack,y_stack,mean,sigma,title,ax=None,n_points=300):
     ax.set_title(title, fontsize=20)
     ax.legend(fontsize=10)
     sns.despine()
+    
+    
+def plot_binary_class(X_scatters,y_scatters,XX1_grid,XX2_grid,grid_preds_mean,grid_preds_sigma,titles:tuple):
+  """
+  funtion to binary classificaton outputs
+
+  X: points shape=(n_samples,2)
+  y_hat: predictions for X shape=(n_samples,)
+  XX1,XX2: grid outputs shape=(n_points,n_points)
+  Z: mean of the predictions shape = (n_points,n_points)
+  sigma_Z: variance of the predictions shape= (n_points,n_points) 
+  titles: tuple with title of the two images. 
+  """
+  fig, ax = plt.subplots(1, 2, figsize=(20, 6))
+
+  ax[0].set_title(titles[0], fontsize=16)
+  ax[0].contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
+  hs = ax[0].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters,cmap='bwr')
+  # *hs is similar to hs[0],hs[1]
+  ax[0].legend(*hs.legend_elements(), fontsize=20)
+
+  ax[1].set_title(titles[1], fontsize=16)
+  CS = ax[1].contourf(XX1_grid, XX2_grid, grid_preds_sigma, cmap="BrBG", alpha=0.8)
+  hs = ax[1].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters,cmap='bwr')
+  ax[1].legend(*hs.legend_elements(), fontsize=20)
+  fig.colorbar(CS,ax=ax[1])
+  sns.despine()
