@@ -95,7 +95,7 @@ def plot_prediction_reg(X_train,Y_train,x_test,y_test,X_linspace,predict_mean,pr
     """
 
     if ax==None:
-      fig,ax=plt.subplots(1)
+      fig,ax=plt.subplots(1, figsize=(10,6))
     ax.plot(X_linspace,predict_mean, color='red',linewidth=3)
     for i_std in range(1,4):
       ax.fill_between(
@@ -149,20 +149,28 @@ def plot_binary_class(X_scatters,y_scatters,XX1_grid,XX2_grid,grid_preds_mean,gr
   sns.despine()
 
 
-def plot_train_test(X_train,X_test,y_pred_train,y_pred_test,y_train,y_test):
-    """
-    predicts using the given model and parameters on training and testing data and plots side by side.
-    X_train: Training points
-    X_test: Testing points
-    y_pred_train: predicted Y labels for training data
-    y_pred_test: predicted Y labels for test data
-    y_train: true y labels of training points
-    y_test: true y labels of testing points
-    """
-    fig,(ax1,ax2) = plt.subplots(1,2,figsize=(10,5))
-    ax1.scatter(X_train[:,0],X_train[:,1],c=y_pred_train,cmap='seismic')
-    ax1.set_title(f'Train Brier Loss {brier_score_loss(y_train,y_pred_train)}')
-    ax2.scatter(X_test[:,0],X_test[:,1],c=y_pred_test,cmap='seismic')
-    ax2.set_title(f'Test Brier Loss {brier_score_loss(y_test,y_pred_test)}')
-    # ax2.set_title(brier_score_loss(y_test,y_pred_test))
+def plot_scattter_predictions(x, y_true, y_test, ax=None):
+    if ax == None:
+      fig, ax = plt.subplots(1,figsize=(10,6))
+    hs = ax.scatter(x[:,0], x[:, 1], c = y_test, cmap="seismic")
+    ax.set_title(f'Train Brier Loss {brier_score_loss(y_true,y_test)}')
+    ax.legend(*hs.legend_elements(), fontsize=16)
     sns.despine()
+
+# def plot_train_test(X_train,X_test,y_pred_train,y_pred_test,y_train,y_test):
+#     """
+#     predicts using the given model and parameters on training and testing data and plots side by side.
+#     X_train: Training points
+#     X_test: Testing points
+#     y_pred_train: predicted Y labels for training data
+#     y_pred_test: predicted Y labels for test data
+#     y_train: true y labels of training points
+#     y_test: true y labels of testing points
+#     """
+#     fig,(ax1,ax2) = plt.subplots(1,2,figsize=(10,5))
+#     ax1.scatter(X_train[:,0],X_train[:,1],c=y_pred_train,cmap='seismic')
+#     ax1.set_title(f'Train Brier Loss {brier_score_loss(y_train,y_pred_train)}')
+#     ax2.scatter(X_test[:,0],X_test[:,1],c=y_pred_test,cmap='seismic')
+#     ax2.set_title(f'Test Brier Loss {brier_score_loss(y_test,y_pred_test)}')
+#     # ax2.set_title(brier_score_loss(y_test,y_pred_test))
+#     sns.despine()
