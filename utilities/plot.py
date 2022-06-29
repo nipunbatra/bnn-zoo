@@ -5,13 +5,12 @@ import scipy.stats as st
 import jax.numpy as jnp
 from sklearn.metrics import brier_score_loss
 
-def plot_actualdata(X,Y,x_test_1,y_test_1,x_test_2,y_test_2):
-    plt.scatter(X,Y,color='black',alpha=0.5,label='Train Data')
-    plt.scatter(x_test_1,y_test_1,color='red',alpha=0.5,label='Test Data')
-    plt.scatter(x_test_2,y_test_2,color='red',alpha=0.5)
-    plt.xlabel("$x$")
-    plt.ylabel("$y$")
-    plt.legend()
+def plot_actualdata(X, y, x_test, y_test):
+    plt.scatter(X, y,color='black', label='Train Data')
+    plt.scatter(x_test, y_test,color='red',alpha=0.5,label='Test Data')
+    plt.xlabel("$x$", fontsize=16)
+    plt.ylabel("$y$", fontsize=16)
+    plt.legend(fontsize=16)
     sns.despine()
 
 

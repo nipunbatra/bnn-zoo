@@ -27,7 +27,7 @@ class mlp(nn.Module):
 
     def loss_fn(self, params, X, y, deterministic=False, rng = jax.random.PRNGKey(0)):
         y_pred = self.apply(params, X, deterministic = deterministic, rngs={"dropout": rng})
-        loss = jnp.sum((y - y_pred)**2)/(2*X.shape[0])
+        loss = jnp.mean((y - y_pred)**2)
         return loss
         
 
