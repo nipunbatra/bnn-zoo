@@ -1,6 +1,5 @@
 import jax.numpy as jnp
 def gmm_mean_var(means_stack,sigmas_stack):
-
     means = jnp.stack(means_stack)
     final_mean = means.mean(axis=0)
     sigmas = jnp.stack(sigmas_stack)
