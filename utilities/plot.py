@@ -19,7 +19,7 @@ def calibration_regression(mean, sigma, Y,label, color, ax=None):
     """
     mean : (n_samples,1) or (n_sample,) prediction mean 
     sigma : (n_samples,1) or (n_sample,) prediction sigma 
-    mean : (n_samples,1) or (n_sample,) Y co-ordinate of ground truth 
+    Y : (n_samples,1) or (n_sample,) Y co-ordinate of ground truth 
     label :  string, 
     
     
@@ -68,6 +68,7 @@ def plot_prediction_reg(
     predict_mean,
     predict_sigma,
     title,
+    marker_size=None,
     ax=None,
 ):
     """
@@ -81,7 +82,7 @@ def plot_prediction_reg(
     predict_sigma: (n_points,) variance of predicted values over X_linspace
     title: title of the plot
     """
-    marker_size = 4 if is_latexify_enabled else None
+    
     if ax == None:
         fig, ax = plt.subplots(1)
     ax.plot(X_linspace, predict_mean, color="red")
