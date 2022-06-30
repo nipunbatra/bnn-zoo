@@ -4,32 +4,28 @@ import pandas as pd
 import scipy.stats as st
 import jax.numpy as jnp
 from sklearn.metrics import brier_score_loss
-
+from probml_utils import is_latexify_enabled
 
 def plot_actualdata(X, y, x_test, y_test):
     plt.scatter(X, y, color="black", label="Train Data")
-    plt.scatter(x_test, y_test, color="red", alpha=0.5, label="Test Data")
-    plt.xlabel("$x$", fontsize=16)
-    plt.ylabel("$y$", fontsize=16)
-    plt.legend(fontsize=16)
+    plt.scatter(x_test, y_test, color="crimson", alpha=0.5, label="Test Data")
+    plt.xlabel("$x$" )
+    plt.ylabel("$y$")
+    plt.legend()
     sns.despine()
 
 
-def calibration_reg(mean, sigma, Y, ax=None):
-    n = len(Y)
-    mean_train = mean[int(n * 1 / 3) : int(n * 2 / 3)]
-    sigma_train = sigma[int(n * 1 / 3) : int(n * 2 / 3)]
-    y_train = Y[int(n * 1 / 3) : int(n * 2 / 3)]
-    mean_test = jnp.concatenate([mean[: int(n * 1 / 3)], mean[int(n * 2 / 3) :]])
-    sigma_test = jnp.concatenate([sigma[: int(n * 1 / 3)], sigma[int(n * 2 / 3) :]])
-    y_test = jnp.concatenate([Y[: int(n * 1 / 3)], Y[int(n * 2 / 3) :]])
-    _, _ = calibration_regression(
-        mean_train, sigma_train, y_train, "black", "Train", ax
-    )
-    _, _ = calibration_regression(mean_test, sigma_test, y_test, "crimson", "Test", ax)
+def calibration_regression(mean, sigma, Y,label, color, ax=None):
+    """
+    mean : (n_samples,1) or (n_sample,) prediction mean 
+    sigma : (n_samples,1) or (n_sample,) prediction sigma 
+    mean : (n_samples,1) or (n_sample,) Y co-ordinate of ground truth 
+    label :  string, 
+    
+    
+    """
 
-
-def calibration_regression(mean, sigma, Y, color, label, ax=None):
+    marker_size = 6 if is_latexify_enabled else None
     if ax is None:
         fig, ax = plt.subplots()
     df = pd.DataFrame()
@@ -51,72 +47,16 @@ def calibration_regression(mean, sigma, Y, color, label, ax=None):
 
     ax.plot(k, counts, color=color, label=label)
 
-    ax.plot(k, counts, "o", color=color)
-    ax.plot(k, k, "o", color="green")
+    ax.scatter(k, counts, color=color,s=marker_size)
+    ax.scatter(k, k,color="green",s=marker_size)
     ax.set_yticks(k)
     ax.set_xticks(k)
-    ax.legend(fontsize=15)
-    ax.set_xlabel("decile", fontsize=20)
-    ax.set_ylabel("ratio of points", fontsize=20)
+    ax.legend()
+    ax.set_xlabel("decile")
+    ax.set_ylabel("ratio of points")
     ax.plot(k, k, color="green", label="Ideal")
     sns.despine()
     return df, df2
-
-
-# change this funtion.
-# x_linspace, Y_mean,Y_sigma, X_train,Y_train,X_test,Y_test
-def plot_prediction(X, Y, x_stack, y_stack, mean, sigma, title, ax=None, n_points=300):
-    if ax == None:
-        fig, ax = plt.subplots(1)
-    ax.plot(x_stack, mean, color="red", linewidth=3)
-    for i_std in range(1, 4):
-        ax.fill_between(
-            x_stack.reshape(n_points),
-            jnp.array((mean - i_std * sigma)),
-            jnp.array((mean + i_std * sigma)),
-            color="lightsalmon",
-            alpha=2 / (3 * i_std),
-            label=f"$\mu\pm{i_std}\sigma$",
-        )
-    ax.scatter(
-        x_stack[: int(n_points / 3)],
-        y_stack[: int(n_points / 3)],
-        color="crimson",
-        alpha=0.5,
-    )
-    ax.scatter(X, Y, color="black", alpha=0.7)
-    ax.scatter(
-        x_stack[int(n_points * 2 / 3) :],
-        y_stack[int(n_points * 2 / 3) :],
-        color="crimson",
-        alpha=0.5,
-    )
-    ax.vlines(
-        min(X),
-        min(min(y_stack), min(mean - 3 * sigma)),
-        max(max(y_stack), max(mean + 3 * sigma)),
-        colors="black",
-        linestyles="--",
-    )
-    ax.vlines(
-        max(X),
-        min(min(y_stack), min(mean - 3 * sigma)),
-        max(max(y_stack), max(mean + 3 * sigma)),
-        colors="black",
-        linestyles="--",
-    )
-    ax.set_xlabel("$x$", fontsize=20)
-    ax.set_ylabel("$y$", fontsize=20)
-    ax.set_ylim(
-        [
-            min(min(y_stack), min(mean - 3 * sigma)),
-            max(max(y_stack), max(mean + 3 * sigma)),
-        ]
-    )
-    ax.set_xlim([min(x_stack), max(x_stack)])
-    ax.set_title(title, fontsize=20)
-    ax.legend(fontsize=10)
-    sns.despine()
 
 
 def plot_prediction_reg(
@@ -141,22 +81,22 @@ def plot_prediction_reg(
     predict_sigma: (n_points,) variance of predicted values over X_linspace
     title: title of the plot
     """
-
+    marker_size = 4 if is_latexify_enabled else None
     if ax == None:
-        fig, ax = plt.subplots(1, figsize=(10, 6))
-    ax.plot(X_linspace, predict_mean, color="red", linewidth=3)
+        fig, ax = plt.subplots(1)
+    ax.plot(X_linspace, predict_mean, color="red")
     for i_std in range(1, 4):
         ax.fill_between(
             X_linspace.reshape((-1,)),
             jnp.array((predict_mean - i_std * predict_sigma)),
             jnp.array((predict_mean + i_std * predict_sigma)),
             color="lightsalmon",
-            alpha=2 / (3 * i_std),
+            alpha=3/ (4 * i_std),
             label=f"$\mu\pm{i_std}\sigma$",
         )
 
-    ax.scatter(x_test, y_test, color="crimson", alpha=0.5)
-    ax.scatter(X_train, Y_train, color="black", alpha=0.7)
+    ax.scatter(x_test, y_test, color="crimson", alpha=0.5,s=marker_size)
+    ax.scatter(X_train, Y_train, color="black", alpha=0.5,s=marker_size)
     ax.vlines(
         min(X_train),
         min(min(y_test), min(predict_mean - 3 * predict_sigma)),
@@ -171,8 +111,8 @@ def plot_prediction_reg(
         colors="black",
         linestyles="--",
     )
-    ax.set_xlabel("$x$", fontsize=20)
-    ax.set_ylabel("$y$", fontsize=20)
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
     ax.set_ylim(
         [
             min(min(y_test), min(predict_mean - 3 * predict_sigma)),
@@ -181,8 +121,8 @@ def plot_prediction_reg(
     )
     ax.set_xlim([min(x_test), max(x_test)])
     # ax.set_ylim(-3,3)
-    ax.set_title(title, fontsize=20)
-    ax.legend(fontsize=10)
+    ax.set_title(title)
+    ax.legend()
     sns.despine()
 
 
@@ -217,17 +157,17 @@ def plot_binary_class(
     ax[1].set_title(titles[1], fontsize=16)
     CS = ax[1].contourf(XX1_grid, XX2_grid, grid_preds_sigma, cmap="viridis", alpha=0.8)
     hs = ax[1].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
-    ax[1].legend(*hs.legend_elements(), fontsize=20)
+    # ax[1].legend(*hs.legend_elements(), fontsize=20)
     fig.colorbar(CS, ax=ax[1])
     sns.despine()
 
 
-def plot_scattter_predictions(x, y_true, y_test, ax=None):
+def plot_scatter_predictions(x, y_true, y_test, ax=None):
     if ax == None:
         fig, ax = plt.subplots(1, figsize=(10, 6))
     hs = ax.scatter(x[:, 0], x[:, 1], c=y_test, cmap="seismic")
     ax.set_title(f"Train Brier Loss {brier_score_loss(y_true,y_test)}")
-    ax.legend(*hs.legend_elements(), fontsize=16)
+    ax.legend(*hs.legend_elements())
     sns.despine()
 
 
