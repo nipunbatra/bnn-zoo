@@ -4,4 +4,6 @@ __pycache__/
 *.pyc
 *.pdf
 *.png
+*.jpg
 *.idea
+rohit*.pkl

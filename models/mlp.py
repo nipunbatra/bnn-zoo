@@ -29,7 +29,16 @@ class mlp(nn.Module):
         y_pred = self.apply(params, X, deterministic = deterministic, rngs={"dropout": rng})
         loss = jnp.mean((y - y_pred)**2)
         return loss
-        
+
+class bnn(nn.Module):
+    features: list
+    @nn.compact
+    def __call__(self, X):
+        for i, feature in enumerate(self.features):
+            X = nn.Dense(feature, name=f"{i}_Dense")(X)
+            if i != 0 and i != len(self.features) - 1:
+                X = nn.relu(X)
+        return X
 
 
 
