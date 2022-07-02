@@ -159,10 +159,11 @@ def plot_train_test(X_train,X_test,y_pred_train,y_pred_test,y_train,y_test):
     y_train: true y labels of training points
     y_test: true y labels of testing points
     """
+    
     fig,(ax1,ax2) = plt.subplots(1,2,figsize=(10,5))
     ax1.scatter(X_train[:,0],X_train[:,1],c=y_pred_train,cmap='seismic')
-    ax1.set_title(f'Train Brier Loss {brier_score_loss(y_train,y_pred_train)}')
+    ax1.set_title(f'Train Brier Loss {brier_score_loss(y_train,y_pred_train)}:.2f')
     ax2.scatter(X_test[:,0],X_test[:,1],c=y_pred_test,cmap='seismic')
-    ax2.set_title(f'Test Brier Loss {brier_score_loss(y_test,y_pred_test)}')
+    ax2.set_title(f'Test Brier Loss {brier_score_loss(y_test,y_pred_test)}:.2f')
     # ax2.set_title(brier_score_loss(y_test,y_pred_test))
     sns.despine()
