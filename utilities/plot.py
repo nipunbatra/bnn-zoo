@@ -8,7 +8,7 @@ from probml_utils import is_latexify_enabled
 
 def plot_actualdata(X, y, x_test, y_test):
     plt.scatter(X, y, color="black", label="Train Data")
-    plt.scatter(x_test, y_test, color="crimson", alpha=0.5, label="Test Data")
+    plt.scatter(x_test, y_test, color="blue", label="Test Data")
     plt.xlabel("$x$" )
     plt.ylabel("$y$")
     plt.legend()
@@ -51,10 +51,12 @@ def calibration_regression(mean, sigma, Y,label, color, ax=None):
     ax.scatter(k, k,color="green",s=marker_size)
     ax.set_yticks(k)
     ax.set_xticks(k)
-    ax.legend()
+    ax.set_xlim([0,1])
+    ax.set_ylim([0,1])
+    # ax.legend()
     ax.set_xlabel("decile")
     ax.set_ylabel("ratio of points")
-    ax.plot(k, k, color="green", label="Ideal")
+    ax.plot(k, k, color="green")
     sns.despine()
     return df, df2
 
@@ -68,8 +70,11 @@ def plot_prediction_reg(
     predict_mean,
     predict_sigma,
     title,
+    y_min=None,
+    y_max=None,
     marker_size=None,
     ax=None,
+
 ):
     """
     plots the prediction in 1d case.
@@ -82,7 +87,9 @@ def plot_prediction_reg(
     predict_sigma: (n_points,) variance of predicted values over X_linspace
     title: title of the plot
     """
-    
+    if marker_size ==None:
+        
+        marker_size  = 4 if is_latexify_enabled() else None
     if ax == None:
         fig, ax = plt.subplots(1)
     ax.plot(X_linspace, predict_mean, color="red")
@@ -96,35 +103,41 @@ def plot_prediction_reg(
             label=f"$\mu\pm{i_std}\sigma$",
         )
 
-    ax.scatter(x_test, y_test, color="crimson", alpha=0.5,s=marker_size)
-    ax.scatter(X_train, Y_train, color="black", alpha=0.5,s=marker_size)
-    ax.vlines(
-        min(X_train),
-        min(min(y_test), min(predict_mean - 3 * predict_sigma)),
-        max(max(y_test), max(predict_mean + 3 * predict_sigma)),
-        colors="black",
-        linestyles="--",
-    )
-    ax.vlines(
-        max(X_train),
-        min(min(y_test), min(predict_mean - 3 * predict_sigma)),
-        max(max(y_test), max(predict_mean + 3 * predict_sigma)),
-        colors="black",
-        linestyles="--",
-    )
+    ax.scatter(x_test, y_test, color="blue", alpha=0.5,s=marker_size,label='Test')
+    ax.scatter(X_train, Y_train, color="black", alpha=0.5,s=marker_size,label='Train')
+    # ax.vlines(
+    #     min(X_train),
+    #     min(min(y_test), min(predict_mean - 3 * predict_sigma)),
+    #     max(max(y_test), max(predict_mean + 3 * predict_sigma)),
+    #     colors="black",
+    #     linestyles="--",
+    # )
+    # ax.vlines(
+    #     max(X_train),
+    #     min(min(y_test), min(predict_mean - 3 * predict_sigma)),
+    #     max(max(y_test), max(predict_mean + 3 * predict_sigma)),
+    #     colors="black",
+    #     linestyles="--",
+    # )
+    ax.vlines(min(X_train),y_min,y_max,  colors="black",
+        linestyles="--",)
+    ax.vlines(max(X_train),y_min,y_max,  colors="black",
+        linestyles="--",)
+    ax.set_ylim([y_min,y_max])
     ax.set_xlabel("$x$")
     ax.set_ylabel("$y$")
-    ax.set_ylim(
-        [
-            min(min(y_test), min(predict_mean - 3 * predict_sigma)),
-            max(max(y_test), max(predict_mean + 3 * predict_sigma)),
-        ]
-    )
+    # ax.set_ylim(
+    #     [
+    #         min(min(y_test), min(predict_mean - 3 * predict_sigma)),
+    #         max(max(y_test), max(predict_mean + 3 * predict_sigma)),
+    #     ]
+    # )
     ax.set_xlim([min(x_test), max(x_test)])
     # ax.set_ylim(-3,3)
     ax.set_title(title)
-    ax.legend()
+    # ax.legend()
     sns.despine()
+    return ax
 
 
 def plot_binary_class(
@@ -170,6 +183,54 @@ def plot_scatter_predictions(x, y_true, y_test, ax=None):
     ax.set_title(f"Train Brier Loss {brier_score_loss(y_true,y_test)}")
     ax.legend(*hs.legend_elements())
     sns.despine()
+
+def plot_prediction_regression_without_test(x_train,y_train,x_linspace_test,mean,sigma,y_min=None,y_max=None,title='',marker_size=None):
+    if marker_size ==None:
+        
+        marker_size  = 4 if is_latexify_enabled() else None
+    fig,ax=plt.subplots(1)
+    ax.vlines(min(x_train),y_min,y_max,  colors="black",
+        linestyles="--",)
+    ax.vlines(max(x_train),y_min,y_max,  colors="black",
+        linestyles="--",)
+    ax.set_ylim([y_min,y_max])
+    ax.scatter(x_train, y_train, color="black",s=marker_size)
+    ax.plot(x_linspace_test, mean, "red", linewidth=2)
+    for i in range(1,4):
+        plt.fill_between(x_linspace_test.reshape(-1), mean - i*sigma, mean + i*sigma, 
+        color="crimson", alpha = 1/(i*3),  label =  f"$\mu\pm{i}\sigma$")
+    # ax.vlines(
+    #     min(x_train),
+    #     min(min(y_train), min(mean - 3 * sigma)),
+    #     max(max(y_train), max(mean + 3 * sigma)),
+    #     colors="black",
+    #     linestyles="--",
+    # )
+    # ax.vlines(
+    #     max(x_train),
+    #     min(min(y_train), min(mean - 3 * sigma)),
+    #     max(max(y_train), max(mean + 3 * sigma)),
+    #     colors="black",
+    #     linestyles="--",
+    # )
+    ax.set_xlabel("$x$")
+    ax.set_ylabel("$y$")
+    # ax.set_ylim(
+    #     [
+    #         min(min(y), min(predict_mean - 3 * predict_sigma)),
+    #         max(max(y_test), max(predict_mean + 3 * predict_sigma)),
+    #     ]
+    # )
+    # ax.set_xlim([min(x_test), max(x_test)])
+    # ax.set_ylim(-3,3)
+    ax.set_title(title)
+    # ax.legend()
+    sns.despine()
+    plt.xlabel("X")
+    plt.ylabel("y")
+    sns.despine()
+    return ax
+
 
 
 # def plot_train_test(X_train,X_test,y_pred_train,y_pred_test,y_train,y_test):
