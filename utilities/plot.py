@@ -5,6 +5,8 @@ import scipy.stats as st
 import jax.numpy as jnp
 from sklearn.metrics import brier_score_loss
 from probml_utils import is_latexify_enabled
+from sklearn.calibration import calibration_curve,CalibrationDisplay
+
 
 def plot_actualdata(X, y, x_test, y_test):
     plt.scatter(X, y, color="black", label="Train Data")
@@ -173,10 +175,23 @@ def plot_binary_class(
     handles_actual.extend(handles)
     labels_actual.extend(labels)
     ax.legend(handles_actual,labels_actual)
-    # *hs is similar to hs[0],hs[1]
 
     fig.colorbar(CS)
     sns.despine()
+    
+def plot_caliberation_classification(pred_train,pred_test,title,y_train,y_test):
+    fig,ax1 = plt.subplots(1,1)
+    prob_true_train,prob_pred_train = calibration_curve(y_train,pred_train,n_bins=5)
+    prob_true_test,prob_pred_test = calibration_curve(y_test,pred_test)
+
+    disp_train = CalibrationDisplay(prob_true_train,prob_pred_train,pred_train,estimator_name="Train")
+    disp_test = CalibrationDisplay(prob_true_test,prob_pred_test,pred_test,estimator_name="Test",)
+
+    disp_train.plot(ax=ax1)
+    disp_test.plot(ax=ax1)
+    sns.despine(ax=ax1)
+    ax1.legend(loc=0)
+    ax1.set_title(title)
 
 
 
