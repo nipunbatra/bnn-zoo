@@ -140,14 +140,15 @@ def plot_prediction_reg(
     return ax
 
 
+
 def plot_binary_class(
     X_scatters,
     y_scatters,
+    X_outside,
     XX1_grid,
     XX2_grid,
     grid_preds_mean,
-    grid_preds_sigma,
-    titles: tuple,
+    titles:str,
 ):
     """
   funtion to binary classificaton outputs
@@ -160,20 +161,23 @@ def plot_binary_class(
   titles: tuple with title of the two images. 
   """
 
-    fig, ax = plt.subplots(1, 2, figsize=(20, 6))
+    fig, ax = plt.subplots(1, 1)
 
-    ax[0].set_title(titles[0], fontsize=16)
-    ax[0].contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
-    hs = ax[0].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
+    # ax.set_title(titles, fontsize=16)
+    CS = ax.contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
+    hs = ax.scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
+    ax.scatter(*X_outside.T,c='c',label="OOD")
+  
+    handles , labels = ax.get_legend_handles_labels()
+    handles_actual, labels_actual = hs.legend_elements()
+    handles_actual.extend(handles)
+    labels_actual.extend(labels)
+    ax.legend(handles_actual,labels_actual)
     # *hs is similar to hs[0],hs[1]
-    ax[0].legend(*hs.legend_elements(), fontsize=20)
 
-    ax[1].set_title(titles[1], fontsize=16)
-    CS = ax[1].contourf(XX1_grid, XX2_grid, grid_preds_sigma, cmap="viridis", alpha=0.8)
-    hs = ax[1].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
-    # ax[1].legend(*hs.legend_elements(), fontsize=20)
-    fig.colorbar(CS, ax=ax[1])
+    fig.colorbar(CS)
     sns.despine()
+
 
 
 def plot_scatter_predictions(x, y_true, y_test, ax=None):
