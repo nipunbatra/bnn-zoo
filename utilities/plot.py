@@ -5,6 +5,8 @@ import scipy.stats as st
 import jax.numpy as jnp
 from sklearn.metrics import brier_score_loss
 from probml_utils import is_latexify_enabled
+from sklearn.calibration import calibration_curve,CalibrationDisplay
+
 
 def plot_actualdata(X, y, x_test, y_test):
     plt.scatter(X, y, color="black", label="Train Data")
@@ -140,14 +142,15 @@ def plot_prediction_reg(
     return ax
 
 
+
 def plot_binary_class(
     X_scatters,
     y_scatters,
+    X_outside,
     XX1_grid,
     XX2_grid,
     grid_preds_mean,
-    grid_preds_sigma,
-    titles: tuple,
+    titles:str,
 ):
     """
   funtion to binary classificaton outputs
@@ -160,20 +163,36 @@ def plot_binary_class(
   titles: tuple with title of the two images. 
   """
 
-    fig, ax = plt.subplots(1, 2, figsize=(20, 6))
+    fig, ax = plt.subplots(1, 1)
 
-    ax[0].set_title(titles[0], fontsize=16)
-    ax[0].contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
-    hs = ax[0].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
-    # *hs is similar to hs[0],hs[1]
-    ax[0].legend(*hs.legend_elements(), fontsize=20)
+    # ax.set_title(titles, fontsize=16)
+    CS = ax.contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
+    hs = ax.scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
+    ax.scatter(*X_outside.T,c='c',label="OOD")
+  
+    handles , labels = ax.get_legend_handles_labels()
+    handles_actual, labels_actual = hs.legend_elements()
+    handles_actual.extend(handles)
+    labels_actual.extend(labels)
+    ax.legend(handles_actual,labels_actual)
 
-    ax[1].set_title(titles[1], fontsize=16)
-    CS = ax[1].contourf(XX1_grid, XX2_grid, grid_preds_sigma, cmap="viridis", alpha=0.8)
-    hs = ax[1].scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
-    # ax[1].legend(*hs.legend_elements(), fontsize=20)
-    fig.colorbar(CS, ax=ax[1])
+    fig.colorbar(CS)
     sns.despine()
+    
+def plot_caliberation_classification(pred_train,pred_test,title,y_train,y_test):
+    fig,ax1 = plt.subplots(1,1)
+    prob_true_train,prob_pred_train = calibration_curve(y_train,pred_train,n_bins=5)
+    prob_true_test,prob_pred_test = calibration_curve(y_test,pred_test)
+
+    disp_train = CalibrationDisplay(prob_true_train,prob_pred_train,pred_train,estimator_name="Train")
+    disp_test = CalibrationDisplay(prob_true_test,prob_pred_test,pred_test,estimator_name="Test",)
+
+    disp_train.plot(ax=ax1)
+    disp_test.plot(ax=ax1)
+    sns.despine(ax=ax1)
+    ax1.legend(loc=0)
+    ax1.set_title(title)
+
 
 
 def plot_scatter_predictions(x, y_true, y_test, ax=None):
