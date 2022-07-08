@@ -151,6 +151,9 @@ def plot_binary_class(
     XX2_grid,
     grid_preds_mean,
     titles:str,
+    legend=False,
+    color_bar=False
+
 ):
     """
   funtion to binary classificaton outputs
@@ -167,30 +170,32 @@ def plot_binary_class(
 
     # ax.set_title(titles, fontsize=16)
     CS = ax.contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
-    hs = ax.scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters, cmap="bwr")
+    hs = ax.scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters,s=4, cmap="bwr")
     ax.scatter(*X_outside.T,c='c',label="OOD")
-  
-    handles , labels = ax.get_legend_handles_labels()
-    handles_actual, labels_actual = hs.legend_elements()
-    handles_actual.extend(handles)
-    labels_actual.extend(labels)
-    ax.legend(handles_actual,labels_actual)
-
-    fig.colorbar(CS)
+    if(legend==True):
+        handles , labels = ax.get_legend_handles_labels()
+        handles_actual, labels_actual = hs.legend_elements()
+        handles_actual.extend(handles)
+        labels_actual.extend(labels)
+        ax.legend(handles_actual,labels_actual)
+    if(color_bar):
+        fig.colorbar(CS)
     sns.despine()
     
-def plot_caliberation_classification(pred_train,pred_test,title,y_train,y_test):
+def plot_caliberation_classification(pred_train,pred_test,title,y_train,y_test,legend=0):
     fig,ax1 = plt.subplots(1,1)
     prob_true_train,prob_pred_train = calibration_curve(y_train,pred_train,n_bins=5)
     prob_true_test,prob_pred_test = calibration_curve(y_test,pred_test)
 
     disp_train = CalibrationDisplay(prob_true_train,prob_pred_train,pred_train,estimator_name="Train")
     disp_test = CalibrationDisplay(prob_true_test,prob_pred_test,pred_test,estimator_name="Test",)
-
     disp_train.plot(ax=ax1)
     disp_test.plot(ax=ax1)
+    handles,labels = ax1.get_legend_handles_labels()
+    labels[0] = 'Ideal'
     sns.despine(ax=ax1)
-    ax1.legend(loc=0)
+
+    ax1.legend(handles,labels,loc=legend)
     ax1.set_title(title)
 
 
