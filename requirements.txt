@@ -21,5 +21,4 @@ tensorflow_probability
 functools
 tqdm
 blackjax
-logging
 regdata
