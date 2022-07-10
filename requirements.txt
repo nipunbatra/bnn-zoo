@@ -16,7 +16,6 @@ flax
 optax
 tensorflow
 tensorflow_probability.substrates.jax
-tensorflow.keras.datasets
 tensorflow_probability
 functools
 tqdm
