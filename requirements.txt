@@ -15,7 +15,6 @@ umap-learn
 flax
 optax
 tensorflow
-tensorflow_probability.substrates.jax
 tensorflow_probability
 functools
 tqdm
