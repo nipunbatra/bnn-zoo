@@ -19,3 +19,4 @@ tensorflow_probability
 tqdm
 blackjax
 regdata
+seaborn
