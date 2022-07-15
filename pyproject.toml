@@ -9,7 +9,7 @@ requires = [
 	]
 
 [tool.setuptools_scm]
-write_to = "bnn-zoo/_version.py"
+write_to = "bnn_zoo/_version.py"
 
 [tool.black]
 line-length = 120
