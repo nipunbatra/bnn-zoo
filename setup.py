@@ -8,7 +8,7 @@ setup(
     name="bnn_zoo",
     version="0.1",
     description = "MLP(Multi-layer Perceptron) from scratch using JAX"
-    url="https://github.com/nipunbatra/bnn-zoo/tree/pip-install-try1"
+    url="https://github.com/nipunbatra/bnn-zoo"
     install_requires=requirements,
     packages=setuptools.find_packages(),
 )
