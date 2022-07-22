@@ -171,7 +171,7 @@ def plot_binary_class(
     # ax.set_title(titles, fontsize=16)
     CS = ax.contourf(XX1_grid, XX2_grid, grid_preds_mean, cmap="coolwarm", alpha=0.8)
     hs = ax.scatter(X_scatters.T[0], X_scatters.T[1], c=y_scatters,s=4, cmap="bwr")
-    ax.scatter(*X_outside.T,c='c',label="OOD")
+    ax.scatter(*X_outside.T,c='c',label="OOD",s=4)
     if(legend==True):
         handles , labels = ax.get_legend_handles_labels()
         handles_actual, labels_actual = hs.legend_elements()
